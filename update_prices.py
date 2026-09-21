@@ -18,15 +18,10 @@ UA = {
 }
 
 
-def get(url):
-    r = requests.get(url, headers=UA, timeout=30)
+def fetch(url):
+    r = requests.get(url, headers=UA, timeout=35)
     r.raise_for_status()
-    return r.text
-
-
-def soup_and_text(url):
-    html = get(url)
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(r.content, "html.parser")
     txt = " ".join(soup.stripped_strings)
     return soup, txt
 
@@ -36,23 +31,23 @@ def load():
 
 
 def save(d):
-    d["updated_at"] = (
-        datetime.now(timezone.utc)
-        .astimezone()
-        .isoformat(timespec="seconds")
-    )
-    DATA.write_text(
-        json.dumps(d, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    d["updated_at"] = datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
+    DATA.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def find_mat(d, mid):
     return next(x for x in d["materials"] if x["id"] == mid)
 
 
+def parse_en_date(s):
+    s = re.sub(r"\s+", " ", s.strip().replace(",", ""))
+    return datetime.strptime(s, "%b %d %Y").date().isoformat()
+
+
 def safe_update(
     mat,
+    *,
+    market=None,
     native_price=None,
     native_currency=None,
     price_date=None,
@@ -66,10 +61,11 @@ def safe_update(
 ):
     old_usd = float(mat.get("usd_per_ton") or 0)
 
-    # Only move "current" to "previous" if the new value is valid.
     if usd_per_ton is not None and old_usd:
         mat["previous_usd_per_ton"] = old_usd
 
+    if market is not None:
+        mat["market"] = market
     if native_price is not None:
         mat["native_price"] = round(float(native_price), 4)
     if native_currency:
@@ -92,11 +88,6 @@ def safe_update(
         mat["delivery_period"] = delivery_period
 
 
-def parse_en_date(s):
-    s = re.sub(r"\s+", " ", s.strip().replace(",", ""))
-    return datetime.strptime(s, "%b %d %Y").date().isoformat()
-
-
 def update_fx(d):
     try:
         r = requests.get(
@@ -105,9 +96,7 @@ def update_fx(d):
             timeout=20,
         )
         r.raise_for_status()
-        j = r.json()
-        rates = j.get("rates", {})
-
+        rates = r.json().get("rates", {})
         if rates.get("EGP"):
             d["fx"]["USD_EGP"] = float(rates["EGP"])
         if rates.get("CNY"):
@@ -122,255 +111,307 @@ def update_fx(d):
         print("FX kept previous value:", e)
 
 
+# -----------------------------------------------------------
+# MEG - TRUE ASIAN CONTRACT PRICE
+# -----------------------------------------------------------
 def update_meg(d):
     url = "https://www.meglobal.biz/news-and-media/?g=28-721-1"
-    _, s = soup_and_text(url)
+    _, s = fetch(url)
 
-    patterns = [
-        r"announces ACP for\s+([A-Za-z]+\s+\d{4}).{0,1600}?US\$\s*([0-9,]+(?:\.\d+)?)\s*/MT",
-        r"ACP for\s+([A-Za-z]+\s+\d{4}).{0,1600}?\$\s*([0-9,]+(?:\.\d+)?)\s*/MT",
-    ]
+    m = re.search(
+        r"announces ACP for\s+([A-Za-z]+\s+\d{4})"
+        r".{0,1800}?"
+        r"US\$\s*([0-9,]+(?:\.\d+)?)\s*/MT"
+        r".{0,300}?"
+        r"CFR Asian main ports",
+        s,
+        re.I | re.S,
+    )
 
-    match = None
-    for pat in patterns:
-        match = re.search(pat, s, re.I | re.S)
-        if match:
-            break
+    if not m:
+        # More tolerant fallback.
+        m = re.search(
+            r"ACP for\s+([A-Za-z]+\s+\d{4})"
+            r".{0,1800}?"
+            r"US\$\s*([0-9,]+(?:\.\d+)?)\s*/MT",
+            s,
+            re.I | re.S,
+        )
 
-    if not match:
-        raise ValueError("MEG ACP not parsed")
+    if not m:
+        raise ValueError("MEG Asian ACP not parsed")
 
-    delivery = match.group(1)
-    price = float(match.group(2).replace(",", ""))
+    delivery = m.group(1)
+    usd = float(m.group(2).replace(",", ""))
 
     safe_update(
         find_mat(d, "MEG"),
-        native_price=price,
+        market="Asia",
+        native_price=usd,
         native_currency="USD",
-        usd_per_ton=price,
+        usd_per_ton=usd,
         price_date=datetime.now().date().isoformat(),
-        basis="MEGlobal ACP - CFR Asian main ports",
+        basis="Asian Contract Price - CFR Asian main ports",
         source_name="MEGlobal",
         source_url=url,
-        price_type="Contract Price",
-        note="عقد آسيوي مرجعي، وليس سعر Spot.",
+        price_type="Asia Contract Price",
+        note="السعر المرجعي الآسيوي MEGlobal ACP، وليس سعر Spot.",
         delivery_period=f"{delivery} arrival",
     )
 
-    print("MEG parsed:", price, "USD/ton", delivery)
+    print("MEG ASIA updated:", usd, "USD/ton CFR Asian main ports")
 
 
+# -----------------------------------------------------------
+# DEG - ASIA / CHINA CFR
+# -----------------------------------------------------------
 def update_deg(d):
-    url = (
-        "https://www.echemi.com/productsInformation/"
-        "pid_Seven1093-diethyleneglycol.html"
-    )
-    _, s = soup_and_text(url)
-
-    # Most robust path: ECHEMI's own summary sentence.
-    # Example:
-    # "... as of Sep 18, 2026: ... International at 1015 USD/ton (China) ..."
-    m = re.search(
-        r"Diethylene glycol prices across.*?"
-        r"as of\s+([A-Za-z]{3}\s+\d{1,2},\s+\d{4})"
-        r".{0,800}?"
-        r"International at\s+([0-9,]+(?:\.\d+)?)\s*USD/ton",
-        s,
-        re.I | re.S,
-    )
-
-    if m:
-        dt = parse_en_date(m.group(1))
-        usd = float(m.group(2).replace(",", ""))
-
-        safe_update(
-            find_mat(d, "DEG"),
-            native_price=usd,
-            native_currency="USD",
-            usd_per_ton=usd,
-            price_date=dt,
-            basis="International price - China (ECHEMI)",
-            source_name="ECHEMI",
-            source_url=url,
-            price_type="International Price",
-            note=(
-                "سعر دولي مرجعي للصين للمقارنة مع عروض الاستيراد؛ "
-                "ليس سعر وصول مصر."
-            ),
-        )
-        print("DEG parsed from summary:", usd, "USD/ton", dt)
-        return
-
-    # Fallback: explicit CFR China row.
-    m = re.search(
-        r"Diethylene glycol\s+China\s+"
-        r"([A-Za-z]{3}\s+\d{1,2},?\s+\d{4})"
-        r".{0,120}?CFR\s*([0-9,]+(?:\.\d+)?)\s*USD/ton",
-        s,
-        re.I | re.S,
-    )
-
-    if m:
-        dt = parse_en_date(m.group(1))
-        usd = float(m.group(2).replace(",", ""))
-
-        safe_update(
-            find_mat(d, "DEG"),
-            native_price=usd,
-            native_currency="USD",
-            usd_per_ton=usd,
-            price_date=dt,
-            basis="CFR China",
-            source_name="ECHEMI",
-            source_url=url,
-            price_type="International Price",
-            note=(
-                "سعر CFR China مرجعي للمقارنة مع عروض الاستيراد؛ "
-                "ليس سعر وصول مصر."
-            ),
-        )
-        print("DEG parsed from CFR row:", usd, "USD/ton", dt)
-        return
-
-    # Final fallback: China Domestic.
-    m = re.search(
-        r"China Domestic at\s+([0-9,]+(?:\.\d+)?)\s*Yuan/mt",
-        s,
-        re.I | re.S,
-    )
-    date_m = re.search(
-        r"as of\s+([A-Za-z]{3}\s+\d{1,2},\s+\d{4})",
-        s,
-        re.I,
-    )
-
-    if m:
-        cny = float(m.group(1).replace(",", ""))
-        usd_cny = float(d["fx"].get("USD_CNY") or 0)
-        usd = cny / usd_cny if usd_cny else None
-        dt = (
-            parse_en_date(date_m.group(1))
-            if date_m else datetime.now().date().isoformat()
-        )
-
-        safe_update(
-            find_mat(d, "DEG"),
-            native_price=cny,
-            native_currency="CNY",
-            usd_per_ton=usd,
-            price_date=dt,
-            basis="China Domestic",
-            source_name="ECHEMI",
-            source_url=url,
-            price_type="Market Indication",
-            note=(
-                "سعر محلي صيني تم استخدامه كبديل عند عدم توفر "
-                "السعر الدولي في الصفحة."
-            ),
-        )
-        print("DEG parsed from domestic fallback:", cny, "CNY/mt", dt)
-        return
-
-    raise ValueError("DEG price not parsed")
-
-
-def update_teg(d):
-    url = "https://www.guidechem.com/price/en/112-27-6.html"
-    _, s = soup_and_text(url)
-
-    patterns = [
-        r"([0-9]{4,6}(?:\.\d+)?)\s*CNY/TON\s*Updated:\s*(\d{4}-\d{2}-\d{2})",
-        r"Updated:\s*(\d{4}-\d{2}-\d{2}).{0,150}?([0-9]{4,6}(?:\.\d+)?)\s*CNY/TON",
+    urls = [
+        "https://www.echemi.com/productsInformation/pid_Seven1093-diethyleneglycol.html",
+        "https://www.echemi.com/price-curve/sinopec-yangzi-petrochemical-pid_Seven1093-4.html",
     ]
 
-    cny = None
-    dt = None
+    last_error = None
 
-    m = re.search(patterns[0], s, re.I | re.S)
-    if m:
-        cny = float(m.group(1))
-        dt = m.group(2)
-    else:
-        m = re.search(patterns[1], s, re.I | re.S)
-        if m:
-            dt = m.group(1)
-            cny = float(m.group(2))
+    for url in urls:
+        try:
+            _, s = fetch(url)
 
-    if cny is None:
-        raise ValueError("TEG price not parsed")
+            # ECHEMI summary: International at 1015 USD/ton (China)
+            m = re.search(
+                r"as of\s+([A-Za-z]{3}\s+\d{1,2},\s+\d{4})"
+                r".{0,1000}?"
+                r"International at\s+([0-9,]+(?:\.\d+)?)\s*USD/ton"
+                r"(?:\s*\(China\))?",
+                s,
+                re.I | re.S,
+            )
+            if m:
+                dt = parse_en_date(m.group(1))
+                usd = float(m.group(2).replace(",", ""))
+
+                safe_update(
+                    find_mat(d, "DEG"),
+                    market="Asia - China CFR",
+                    native_price=usd,
+                    native_currency="USD",
+                    usd_per_ton=usd,
+                    price_date=dt,
+                    basis="Asia reference - CFR China",
+                    source_name="ECHEMI",
+                    source_url=url,
+                    price_type="Asia CFR Market Price",
+                    note="مرجع سوق آسيوي على أساس CFR China؛ لا يشمل تكلفة الوصول إلى مصر.",
+                )
+                print("DEG ASIA updated:", usd, "USD/ton CFR China", dt)
+                return
+
+            # Price curve/table form.
+            m = re.search(
+                r"Diethylene glycol\s+China"
+                r".{0,120}?"
+                r"CFR"
+                r".{0,100}?"
+                r"([0-9,]+(?:\.\d+)?)"
+                r".{0,100}?"
+                r"USD/ton"
+                r".{0,100}?"
+                r"([A-Za-z]{3}\s+\d{1,2},\s+\d{4})",
+                s,
+                re.I | re.S,
+            )
+            if m:
+                usd = float(m.group(1).replace(",", ""))
+                dt = parse_en_date(m.group(2))
+
+                safe_update(
+                    find_mat(d, "DEG"),
+                    market="Asia - China CFR",
+                    native_price=usd,
+                    native_currency="USD",
+                    usd_per_ton=usd,
+                    price_date=dt,
+                    basis="Asia reference - CFR China",
+                    source_name="ECHEMI",
+                    source_url=url,
+                    price_type="Asia CFR Market Price",
+                    note="مرجع سوق آسيوي على أساس CFR China؛ لا يشمل تكلفة الوصول إلى مصر.",
+                )
+                print("DEG ASIA updated:", usd, "USD/ton CFR China", dt)
+                return
+
+        except Exception as e:
+            last_error = e
+
+    raise ValueError(f"DEG Asia price not parsed: {last_error}")
+
+
+# -----------------------------------------------------------
+# TEG - ASIA / EAST CHINA
+# -----------------------------------------------------------
+def update_teg(d):
+    url = "https://www.guidechem.com/price/en/112-27-6.html"
+    _, s = fetch(url)
+
+    m = re.search(
+        r"([0-9]{4,6}(?:\.\d+)?)\s*CNY/TON"
+        r".{0,80}?"
+        r"Updated:\s*(\d{4}-\d{2}-\d{2})",
+        s,
+        re.I | re.S,
+    )
+
+    if not m:
+        raise ValueError("TEG East China price not parsed")
+
+    cny = float(m.group(1))
+    dt = m.group(2)
 
     usd_cny = float(d["fx"].get("USD_CNY") or 0)
     usd = cny / usd_cny if usd_cny else None
 
     safe_update(
         find_mat(d, "TEG"),
+        market="Asia - East China",
         native_price=cny,
         native_currency="CNY",
         usd_per_ton=usd,
         price_date=dt,
-        basis="China / Shandong 99.9% market indication",
+        basis="East China / Shandong 99.9%",
         source_name="GuideChem / GuideTrends",
         source_url=url,
-        price_type="Market Indication",
-        note="مؤشر سوق صيني لمحتوى 99.9%.",
+        price_type="Asia Market Indication",
+        note="مرجع سوق آسيوي من شرق الصين - Shandong Content 99.9%.",
     )
 
-    print("TEG parsed:", cny, "CNY/ton", dt)
+    print("TEG ASIA updated:", cny, "CNY/ton East China", dt)
 
 
+# -----------------------------------------------------------
+# PEG 400 - ASIA / EAST CHINA MARKET REFERENCE
+# Primary: MySteel/Lonzhong market range
+# Fallback: ChemicalBook PEG400 supplier median
+# -----------------------------------------------------------
 def update_peg400(d):
-    url = "https://chem.100ppi.com/price/plist-940-1.html"
-    soup, s = soup_and_text(url)
+    primary_url = "https://www.mysteel.com/hot/1654547.html"
+
+    try:
+        _, s = fetch(primary_url)
+
+        # Look for all dated PEG400 market reference ranges.
+        matches = []
+
+        for m in re.finditer(
+            r"(20\d{2}-\d{2}-\d{2})"
+            r".{0,900}?"
+            r"PEG400"
+            r".{0,220}?"
+            r"([0-9]{4,6})\s*-\s*([0-9]{4,6})"
+            r"\s*元/吨",
+            s,
+            re.I | re.S,
+        ):
+            dt = m.group(1)
+            low = float(m.group(2))
+            high = float(m.group(3))
+            if 3000 <= low <= 30000 and low <= high <= 30000:
+                matches.append((dt, low, high))
+
+        if matches:
+            latest = max(x[0] for x in matches)
+            same_day = [x for x in matches if x[0] == latest]
+            low = median([x[1] for x in same_day])
+            high = median([x[2] for x in same_day])
+            cny = (low + high) / 2.0
+
+            usd_cny = float(d["fx"].get("USD_CNY") or 0)
+            usd = cny / usd_cny if usd_cny else None
+
+            safe_update(
+                find_mat(d, "PEG400"),
+                market="Asia - East China",
+                native_price=cny,
+                native_currency="CNY",
+                usd_per_ton=usd,
+                price_date=latest,
+                basis=f"East China PEG400 market range {low:.0f}-{high:.0f} CNY/ton",
+                source_name="MySteel / Longzhong market report",
+                source_url=primary_url,
+                price_type="Asia Market Reference",
+                note=(
+                    f"مرجع سوق شرق الصين PEG400: {low:.0f}-{high:.0f} يوان/طن. "
+                    f"السعر المعروض بالدولار مبني على منتصف النطاق {cny:.0f} يوان/طن. "
+                    "PEG400 لا يملك Benchmark آسيوي موحد مثل MEG."
+                ),
+            )
+
+            print(
+                "PEG400 ASIA updated:",
+                f"{low:.0f}-{high:.0f} CNY/ton",
+                "midpoint =", cny,
+                "date =", latest,
+            )
+            return
+
+    except Exception as e:
+        print("PEG400 primary Asia source failed:", e)
+
+    # Fallback: ChemicalBook latest PEG400 supplier quotes.
+    fallback_url = "https://m.chemicalbook.com/priceindex_cb6145866.htm"
+    soup, s = fetch(fallback_url)
 
     quotes = []
 
-    # Parse table rows rather than relying on one brittle regex.
+    # Parse each table row, taking only MW=400 / PEG400 rows.
     for tr in soup.find_all("tr"):
-        rt = " ".join(tr.stripped_strings)
+        row = " ".join(tr.stripped_strings)
 
-        if not re.search(r"分子量\s*[：:]\s*400", rt):
+        if not re.search(r"(分子量\s*[：:]\s*400|PEG\s*-?\s*400)", row, re.I):
             continue
 
-        pm = re.search(r"([0-9,]+(?:\.\d+)?)\s*元/吨", rt)
-        dm = re.search(r"(20\d{2}-\d{2}-\d{2})", rt)
+        pm = re.search(r"([0-9,]+(?:\.\d+)?)\s*元/吨", row)
+        dm_full = re.search(r"(20\d{2}-\d{2}-\d{2})", row)
+        dm_short = re.search(r"(\d{2})-(\d{2})", row)
 
-        if pm and dm:
-            quotes.append(
-                {
-                    "date": dm.group(1),
-                    "price": float(pm.group(1).replace(",", "")),
-                    "row": rt,
-                }
-            )
+        if not pm:
+            continue
 
-    # Regex fallback if HTML table structure changes.
+        price = float(pm.group(1).replace(",", ""))
+
+        if dm_full:
+            dt = dm_full.group(1)
+        elif dm_short:
+            year = datetime.now().year
+            dt = f"{year}-{dm_short.group(1)}-{dm_short.group(2)}"
+        else:
+            continue
+
+        if 3000 <= price <= 30000:
+            quotes.append((dt, price))
+
+    # Text fallback if rows aren't represented cleanly.
     if not quotes:
         for m in re.finditer(
-            r"分子量\s*[：:]\s*400"
-            r".{0,250}?"
-            r"([0-9,]+(?:\.\d+)?)\s*元/吨"
-            r".{0,250}?"
-            r"(20\d{2}-\d{2}-\d{2})",
+            r"(20\d{2}-\d{2}-\d{2}|(?:\d{2}-\d{2}))"
+            r".{0,300}?"
+            r"(?:分子量\s*[：:]\s*400|PEG\s*-?\s*400)"
+            r".{0,200}?"
+            r"([0-9,]+(?:\.\d+)?)\s*元/吨",
             s,
-            re.S,
+            re.I | re.S,
         ):
-            quotes.append(
-                {
-                    "date": m.group(2),
-                    "price": float(m.group(1).replace(",", "")),
-                    "row": m.group(0),
-                }
-            )
+            ds = m.group(1)
+            if len(ds) == 5:
+                ds = f"{datetime.now().year}-{ds}"
+            price = float(m.group(2).replace(",", ""))
+            if 3000 <= price <= 30000:
+                quotes.append((ds, price))
 
     if not quotes:
-        raise ValueError("PEG400 price not parsed")
+        raise ValueError("PEG400 Asia fallback price not parsed")
 
-    latest_date = max(q["date"] for q in quotes)
-    latest_prices = [
-        q["price"] for q in quotes if q["date"] == latest_date
-    ]
-
-    # Use median because multiple suppliers quote PEG400 on the same day.
+    latest = max(x[0] for x in quotes)
+    latest_prices = [x[1] for x in quotes if x[0] == latest]
     cny = float(median(latest_prices))
 
     usd_cny = float(d["fx"].get("USD_CNY") or 0)
@@ -378,29 +419,28 @@ def update_peg400(d):
 
     safe_update(
         find_mat(d, "PEG400"),
+        market="Asia - China",
         native_price=cny,
         native_currency="CNY",
         usd_per_ton=usd,
-        price_date=latest_date,
-        basis="Median of current China supplier quotes - MW 400",
-        source_name="SunSirs / 100ppi",
-        source_url=url,
-        price_type="Supplier Market Median",
+        price_date=latest,
+        basis="China PEG400 supplier-market median",
+        source_name="ChemicalBook",
+        source_url=fallback_url,
+        price_type="Asia Supplier Market Indicator",
         note=(
-            f"وسيط {len(latest_prices)} عروض PEG 400 المنشورة لنفس اليوم. "
-            "PEG400 ليس له Benchmark عالمي موحد، لذلك هذا مؤشر موردين "
-            "وليس سعر بورصة."
+            f"وسيط {len(latest_prices)} عروض PEG400 في أحدث يوم. "
+            "يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
         ),
     )
 
     print(
-        "PEG400 parsed:",
+        "PEG400 ASIA fallback updated:",
         len(latest_prices),
-        "quotes on",
-        latest_date,
-        "median =",
+        "quotes, median =",
         cny,
         "CNY/ton",
+        latest,
     )
 
 
@@ -408,12 +448,14 @@ def main():
     d = load()
     update_fx(d)
 
-    for name, fn in [
+    jobs = [
         ("MEG", update_meg),
         ("DEG", update_deg),
         ("TEG", update_teg),
         ("PEG400", update_peg400),
-    ]:
+    ]
+
+    for name, fn in jobs:
         try:
             fn(d)
             print(name, "updated")
