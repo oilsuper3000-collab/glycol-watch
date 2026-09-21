@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-21T14:08:20+00:00",
+  "updated_at": "2026-09-21T14:12:16+00:00",
   "fx": {
     "USD_EGP": 52.042641,
     "USD_CNY": 6.704712
@@ -25,19 +25,19 @@
     {
       "id": "DEG",
       "name": "Diethylene Glycol",
-      "market": "South China",
-      "basis": "Regional market indication",
-      "native_price": 8000.0,
+      "market": "Asia - East China",
+      "basis": "East China DEG market reference",
+      "native_price": 8167.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1194.92,
-      "previous_usd_per_ton": 1200.15,
-      "price_date": "2026-09-18",
+      "usd_per_ton": 1218.1,
+      "previous_usd_per_ton": 1194.92,
+      "price_date": "2026-09-21",
       "delivery_period": "",
-      "price_type": "Market Indication",
-      "source_name": "ECHEMI",
-      "source_url": "https://www.echemi.com/productsInformation/pid_Seven1093-diethyleneglycol.html",
-      "note": "سعر سوق إقليمي داخل الصين؛ لا يساوي بالضرورة CFR Egypt."
+      "price_type": "Asia Market Indication",
+      "source_name": "GuideChem / GuideTrends",
+      "source_url": "https://www.guidechem.com/price/en/111-46-6.html",
+      "note": "مرجع سوق آسيوي يومي من شرق الصين. للمقارنة مع الاستيراد يمكن مراجعة CFR China بشكل منفصل."
     },
     {
       "id": "TEG",
@@ -65,7 +65,7 @@
       "native_currency": "CNY",
       "unit": "MT",
       "usd_per_ton": 1610.81,
-      "previous_usd_per_ton": 1792.38,
+      "previous_usd_per_ton": 1610.81,
       "price_date": "2026-09-21",
       "delivery_period": "",
       "price_type": "Asia Market Reference",
