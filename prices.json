@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-21T14:00:00+03:00",
+  "updated_at": "2026-09-21T13:30:37+00:00",
   "fx": {
-    "USD_EGP": 52.0171,
-    "USD_CNY": 6.695
+    "USD_EGP": 52.042641,
+    "USD_CNY": 6.704712
   },
   "materials": [
     {
@@ -14,8 +14,8 @@
       "native_currency": "USD",
       "unit": "MT",
       "usd_per_ton": 880.0,
-      "previous_usd_per_ton": 780.0,
-      "price_date": "2026-09-10",
+      "previous_usd_per_ton": 880.0,
+      "price_date": "2026-09-21",
       "delivery_period": "October 2026 arrival",
       "price_type": "Contract Price",
       "source_name": "MEGlobal",
@@ -43,13 +43,13 @@
       "id": "TEG",
       "name": "Triethylene Glycol",
       "market": "Shandong, China",
-      "basis": "99.9% market indication",
+      "basis": "China / Shandong 99.9% market indication",
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1339.36,
+      "usd_per_ton": 1337.42,
       "previous_usd_per_ton": 1339.36,
-      "price_date": "2026-09-19",
+      "price_date": "2026-09-20",
       "delivery_period": "",
       "price_type": "Market Indication",
       "source_name": "GuideChem / GuideTrends",
