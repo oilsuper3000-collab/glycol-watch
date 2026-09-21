@@ -166,89 +166,69 @@ def update_meg(d):
 # DEG - ASIA / CHINA CFR
 # -----------------------------------------------------------
 def update_deg(d):
-    urls = [
-        "https://www.echemi.com/productsInformation/pid_Seven1093-diethyleneglycol.html",
-        "https://www.echemi.com/price-curve/sinopec-yangzi-petrochemical-pid_Seven1093-4.html",
-    ]
+    # Stable Asian market source: GuideChem / GuideTrends.
+    # Same source style already works reliably for TEG.
+    url = "https://www.guidechem.com/price/en/111-46-6.html"
+    _, s = fetch(url)
 
-    last_error = None
+    # Main daily China / Asia reference shown at top of the page:
+    # Example: 8167CNY/TON Updated: 2026-09-19
+    m = re.search(
+        r"([0-9]{4,6}(?:\.\d+)?)\s*CNY/TON"
+        r".{0,100}?"
+        r"Updated:\s*(\d{4}-\d{2}-\d{2})",
+        s,
+        re.I | re.S,
+    )
 
-    for url in urls:
-        try:
-            _, s = fetch(url)
+    if not m:
+        # Fallback: reverse order if page formatting changes.
+        m = re.search(
+            r"Updated:\s*(\d{4}-\d{2}-\d{2})"
+            r".{0,180}?"
+            r"([0-9]{4,6}(?:\.\d+)?)\s*CNY/TON",
+            s,
+            re.I | re.S,
+        )
+        if not m:
+            raise ValueError("DEG East China price not parsed")
 
-            # ECHEMI summary: International at 1015 USD/ton (China)
-            m = re.search(
-                r"as of\s+([A-Za-z]{3}\s+\d{1,2},\s+\d{4})"
-                r".{0,1000}?"
-                r"International at\s+([0-9,]+(?:\.\d+)?)\s*USD/ton"
-                r"(?:\s*\(China\))?",
-                s,
-                re.I | re.S,
-            )
-            if m:
-                dt = parse_en_date(m.group(1))
-                usd = float(m.group(2).replace(",", ""))
+        dt = m.group(1)
+        cny = float(m.group(2))
+    else:
+        cny = float(m.group(1))
+        dt = m.group(2)
 
-                safe_update(
-                    find_mat(d, "DEG"),
-                    market="Asia - China CFR",
-                    native_price=usd,
-                    native_currency="USD",
-                    usd_per_ton=usd,
-                    price_date=dt,
-                    basis="Asia reference - CFR China",
-                    source_name="ECHEMI",
-                    source_url=url,
-                    price_type="Asia CFR Market Price",
-                    note="مرجع سوق آسيوي على أساس CFR China؛ لا يشمل تكلفة الوصول إلى مصر.",
-                )
-                print("DEG ASIA updated:", usd, "USD/ton CFR China", dt)
-                return
+    usd_cny = float(d["fx"].get("USD_CNY") or 0)
+    usd = cny / usd_cny if usd_cny else None
 
-            # Price curve/table form.
-            m = re.search(
-                r"Diethylene glycol\s+China"
-                r".{0,120}?"
-                r"CFR"
-                r".{0,100}?"
-                r"([0-9,]+(?:\.\d+)?)"
-                r".{0,100}?"
-                r"USD/ton"
-                r".{0,100}?"
-                r"([A-Za-z]{3}\s+\d{1,2},\s+\d{4})",
-                s,
-                re.I | re.S,
-            )
-            if m:
-                usd = float(m.group(1).replace(",", ""))
-                dt = parse_en_date(m.group(2))
+    safe_update(
+        find_mat(d, "DEG"),
+        market="Asia - East China",
+        native_price=cny,
+        native_currency="CNY",
+        usd_per_ton=usd,
+        price_date=dt,
+        basis="East China DEG market reference",
+        source_name="GuideChem / GuideTrends",
+        source_url=url,
+        price_type="Asia Market Indication",
+        note=(
+            "مرجع سوق آسيوي يومي من شرق الصين. "
+            "للمقارنة مع الاستيراد يمكن مراجعة CFR China بشكل منفصل."
+        ),
+    )
 
-                safe_update(
-                    find_mat(d, "DEG"),
-                    market="Asia - China CFR",
-                    native_price=usd,
-                    native_currency="USD",
-                    usd_per_ton=usd,
-                    price_date=dt,
-                    basis="Asia reference - CFR China",
-                    source_name="ECHEMI",
-                    source_url=url,
-                    price_type="Asia CFR Market Price",
-                    note="مرجع سوق آسيوي على أساس CFR China؛ لا يشمل تكلفة الوصول إلى مصر.",
-                )
-                print("DEG ASIA updated:", usd, "USD/ton CFR China", dt)
-                return
+    print(
+        "DEG ASIA updated:",
+        cny,
+        "CNY/ton East China",
+        dt,
+        "≈",
+        round(usd, 2) if usd else "N/A",
+        "USD/ton",
+    )
 
-        except Exception as e:
-            last_error = e
-
-    raise ValueError(f"DEG Asia price not parsed: {last_error}")
-
-
-# -----------------------------------------------------------
-# TEG - ASIA / EAST CHINA
-# -----------------------------------------------------------
 def update_teg(d):
     url = "https://www.guidechem.com/price/en/112-27-6.html"
     _, s = fetch(url)
