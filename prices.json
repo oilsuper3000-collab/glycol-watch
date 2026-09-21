@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-21T13:38:10+00:00",
+  "updated_at": "2026-09-21T14:08:20+00:00",
   "fx": {
     "USD_EGP": 52.042641,
     "USD_CNY": 6.704712
@@ -9,7 +9,7 @@
       "id": "MEG",
       "name": "Monoethylene Glycol",
       "market": "Asia",
-      "basis": "MEGlobal ACP - CFR Asian main ports",
+      "basis": "Asian Contract Price - CFR Asian main ports",
       "native_price": 880.0,
       "native_currency": "USD",
       "unit": "MT",
@@ -17,10 +17,10 @@
       "previous_usd_per_ton": 880.0,
       "price_date": "2026-09-21",
       "delivery_period": "October 2026 arrival",
-      "price_type": "Contract Price",
+      "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
       "source_url": "https://www.meglobal.biz/news-and-media/?g=28-721-1",
-      "note": "عقد آسيوي مرجعي، وليس سعر Spot."
+      "note": "السعر المرجعي الآسيوي MEGlobal ACP، وليس سعر Spot."
     },
     {
       "id": "DEG",
@@ -42,8 +42,8 @@
     {
       "id": "TEG",
       "name": "Triethylene Glycol",
-      "market": "Shandong, China",
-      "basis": "China / Shandong 99.9% market indication",
+      "market": "Asia - East China",
+      "basis": "East China / Shandong 99.9%",
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
@@ -51,27 +51,27 @@
       "previous_usd_per_ton": 1337.42,
       "price_date": "2026-09-20",
       "delivery_period": "",
-      "price_type": "Market Indication",
+      "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
       "source_url": "https://www.guidechem.com/price/en/112-27-6.html",
-      "note": "مؤشر سوق صيني لمحتوى 99.9%."
+      "note": "مرجع سوق آسيوي من شرق الصين - Shandong Content 99.9%."
     },
     {
       "id": "PEG400",
       "name": "Polyethylene Glycol 400",
-      "market": "China",
-      "basis": "Supplier indication - 99% / industrial listings",
-      "native_price": 12000.0,
+      "market": "Asia - East China",
+      "basis": "East China PEG400 market range 10600-11000 CNY/ton",
+      "native_price": 10800.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1792.38,
+      "usd_per_ton": 1610.81,
       "previous_usd_per_ton": 1792.38,
       "price_date": "2026-09-21",
       "delivery_period": "",
-      "price_type": "Supplier Indication",
-      "source_name": "GuideChem supplier listings",
-      "source_url": "https://china.guidechem.com/21252/",
-      "note": "PEG400 ليس له Benchmark موحد؛ السعر يتأثر بالـGrade والمنشأ والتعبئة."
+      "price_type": "Asia Market Reference",
+      "source_name": "MySteel / Longzhong market report",
+      "source_url": "https://www.mysteel.com/hot/1654547.html",
+      "note": "مرجع سوق شرق الصين PEG400: 10600-11000 يوان/طن. السعر المعروض بالدولار مبني على منتصف النطاق 10800 يوان/طن. PEG400 لا يملك Benchmark آسيوي موحد مثل MEG."
     }
   ]
 }
