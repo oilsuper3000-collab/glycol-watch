@@ -1,0 +1,16 @@
+{
+  "name": "مراجعة أسعار الجليكول",
+  "short_name": "Glycol Watch",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#123b66",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "updated_at": "2026-09-21T14:00:00+03:00",
+  "fx": {
+    "USD_EGP": 52.0171,
+    "USD_CNY": 6.695
+  },
+  "materials": [
+    {
+      "id": "MEG",
+      "name": "Monoethylene Glycol",
+      "market": "Asia",
+      "basis": "MEGlobal ACP - CFR Asian main ports",
+      "native_price": 880.0,
+      "native_currency": "USD",
+      "unit": "MT",
+      "usd_per_ton": 880.0,
+      "previous_usd_per_ton": 780.0,
+      "price_date": "2026-09-10",
+      "delivery_period": "October 2026 arrival",
+      "price_type": "Contract Price",
+      "source_name": "MEGlobal",
+      "source_url": "https://www.meglobal.biz/news-and-media/?g=28-721-1",
+      "note": "عقد آسيوي مرجعي، وليس سعر Spot."
+    },
+    {
+      "id": "DEG",
+      "name": "Diethylene Glycol",
+      "market": "South China",
+      "basis": "Regional market indication",
+      "native_price": 8000.0,
+      "native_currency": "CNY",
+      "unit": "MT",
+      "usd_per_ton": 1194.92,
+      "previous_usd_per_ton": 1200.15,
+      "price_date": "2026-09-18",
+      "delivery_period": "",
+      "price_type": "Market Indication",
+      "source_name": "ECHEMI",
+      "source_url": "https://www.echemi.com/productsInformation/pid_Seven1093-diethyleneglycol.html",
+      "note": "سعر سوق إقليمي داخل الصين؛ لا يساوي بالضرورة CFR Egypt."
+    },
+    {
+      "id": "TEG",
+      "name": "Triethylene Glycol",
+      "market": "Shandong, China",
+      "basis": "99.9% market indication",
+      "native_price": 8967.0,
+      "native_currency": "CNY",
+      "unit": "MT",
+      "usd_per_ton": 1339.36,
+      "previous_usd_per_ton": 1339.36,
+      "price_date": "2026-09-19",
+      "delivery_period": "",
+      "price_type": "Market Indication",
+      "source_name": "GuideChem / GuideTrends",
+      "source_url": "https://www.guidechem.com/price/en/112-27-6.html",
+      "note": "مؤشر سوق صيني لمحتوى 99.9%."
+    },
+    {
+      "id": "PEG400",
+      "name": "Polyethylene Glycol 400",
+      "market": "China",
+      "basis": "Supplier indication - 99% / industrial listings",
+      "native_price": 12000.0,
+      "native_currency": "CNY",
+      "unit": "MT",
+      "usd_per_ton": 1792.38,
+      "previous_usd_per_ton": 1792.38,
+      "price_date": "2026-09-21",
+      "delivery_period": "",
+      "price_type": "Supplier Indication",
+      "source_name": "GuideChem supplier listings",
+      "source_url": "https://china.guidechem.com/21252/",
+      "note": "PEG400 ليس له Benchmark موحد؛ السعر يتأثر بالـGrade والمنشأ والتعبئة."
+    }
+  ]
+}
