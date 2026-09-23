@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-22T06:05:16+00:00",
+  "updated_at": "2026-09-23T06:05:20+00:00",
   "fx": {
-    "USD_EGP": 51.928286,
-    "USD_CNY": 6.710202
+    "USD_EGP": 51.655442,
+    "USD_CNY": 6.71347
   },
   "materials": [
     {
@@ -15,7 +15,7 @@
       "unit": "MT",
       "usd_per_ton": 880.0,
       "previous_usd_per_ton": 880.0,
-      "price_date": "2026-09-22",
+      "price_date": "2026-09-23",
       "delivery_period": "October 2026 arrival",
       "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
@@ -30,8 +30,8 @@
       "native_price": 8167.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1217.1,
-      "previous_usd_per_ton": 1218.1,
+      "usd_per_ton": 1216.51,
+      "previous_usd_per_ton": 1217.1,
       "price_date": "2026-09-21",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
@@ -47,9 +47,9 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1336.32,
-      "previous_usd_per_ton": 1337.42,
-      "price_date": "2026-09-20",
+      "usd_per_ton": 1335.67,
+      "previous_usd_per_ton": 1336.32,
+      "price_date": "2026-09-22",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -59,19 +59,19 @@
     {
       "id": "PEG400",
       "name": "Polyethylene Glycol 400",
-      "market": "Asia - East China",
-      "basis": "East China PEG400 market range 10600-11000 CNY/ton",
-      "native_price": 10800.0,
+      "market": "Asia - China",
+      "basis": "China PEG400 supplier-market median",
+      "native_price": 8300.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1609.49,
-      "previous_usd_per_ton": 1610.81,
-      "price_date": "2026-09-21",
+      "usd_per_ton": 1236.32,
+      "previous_usd_per_ton": 1609.49,
+      "price_date": "2026-09-22",
       "delivery_period": "",
-      "price_type": "Asia Market Reference",
-      "source_name": "MySteel / Longzhong market report",
-      "source_url": "https://www.mysteel.com/hot/1654547.html",
-      "note": "مرجع سوق شرق الصين PEG400: 10600-11000 يوان/طن. السعر المعروض بالدولار مبني على منتصف النطاق 10800 يوان/طن. PEG400 لا يملك Benchmark آسيوي موحد مثل MEG."
+      "price_type": "Asia Supplier Market Indicator",
+      "source_name": "ChemicalBook",
+      "source_url": "https://m.chemicalbook.com/priceindex_cb6145866.htm",
+      "note": "وسيط 2 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
     }
   ]
 }
