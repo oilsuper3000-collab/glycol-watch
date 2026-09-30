@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-09-29T06:05:50+00:00",
+  "updated_at": "2026-09-30T06:05:33+00:00",
   "fx": {
-    "USD_EGP": 52.070874,
-    "USD_CNY": 6.721579
+    "USD_EGP": 52.092039,
+    "USD_CNY": 6.717859
   },
   "materials": [
     {
@@ -15,7 +15,7 @@
       "unit": "MT",
       "usd_per_ton": 880.0,
       "previous_usd_per_ton": 880.0,
-      "price_date": "2026-09-29",
+      "price_date": "2026-09-30",
       "delivery_period": "October 2026 arrival",
       "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
@@ -27,12 +27,12 @@
       "name": "Diethylene Glycol",
       "market": "Asia - East China",
       "basis": "East China DEG market reference",
-      "native_price": 7400.0,
+      "native_price": 7267.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1100.93,
-      "previous_usd_per_ton": 1101.27,
-      "price_date": "2026-09-23",
+      "usd_per_ton": 1081.74,
+      "previous_usd_per_ton": 1100.93,
+      "price_date": "2026-09-27",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -47,9 +47,9 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1334.06,
-      "previous_usd_per_ton": 1334.48,
-      "price_date": "2026-09-25",
+      "usd_per_ton": 1334.8,
+      "previous_usd_per_ton": 1334.06,
+      "price_date": "2026-09-28",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -61,17 +61,17 @@
       "name": "Polyethylene Glycol 400",
       "market": "Asia - China",
       "basis": "China PEG400 supplier-market median",
-      "native_price": 8300.0,
+      "native_price": 9500.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1234.83,
-      "previous_usd_per_ton": 1413.8,
-      "price_date": "2026-09-28",
+      "usd_per_ton": 1414.14,
+      "previous_usd_per_ton": 1234.83,
+      "price_date": "2026-09-29",
       "delivery_period": "",
       "price_type": "Asia Supplier Market Indicator",
       "source_name": "ChemicalBook",
       "source_url": "https://m.chemicalbook.com/priceindex_cb6145866.htm",
-      "note": "وسيط 2 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
+      "note": "وسيط 3 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
     }
   ]
 }
