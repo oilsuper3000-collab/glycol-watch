@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-02T06:05:54+00:00",
+  "updated_at": "2026-10-03T06:11:06+00:00",
   "fx": {
-    "USD_EGP": 52.300596,
-    "USD_CNY": 6.714553
+    "USD_EGP": 52.28469,
+    "USD_CNY": 6.714383
   },
   "materials": [
     {
@@ -15,7 +15,7 @@
       "unit": "MT",
       "usd_per_ton": 880.0,
       "previous_usd_per_ton": 880.0,
-      "price_date": "2026-10-02",
+      "price_date": "2026-10-03",
       "delivery_period": "October 2026 arrival",
       "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
@@ -30,9 +30,9 @@
       "native_price": 6692.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 996.64,
-      "previous_usd_per_ton": 996.3,
-      "price_date": "2026-09-30",
+      "usd_per_ton": 996.67,
+      "previous_usd_per_ton": 996.64,
+      "price_date": "2026-10-01",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -47,9 +47,9 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1335.46,
-      "previous_usd_per_ton": 1335.0,
-      "price_date": "2026-09-30",
+      "usd_per_ton": 1335.49,
+      "previous_usd_per_ton": 1335.46,
+      "price_date": "2026-10-01",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -61,17 +61,17 @@
       "name": "Polyethylene Glycol 400",
       "market": "Asia - China",
       "basis": "China PEG400 supplier-market median",
-      "native_price": 8300.0,
+      "native_price": 7850.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1236.12,
-      "previous_usd_per_ton": 1235.69,
-      "price_date": "2026-09-30",
+      "usd_per_ton": 1169.13,
+      "previous_usd_per_ton": 1236.12,
+      "price_date": "2026-10-02",
       "delivery_period": "",
       "price_type": "Asia Supplier Market Indicator",
       "source_name": "ChemicalBook",
       "source_url": "https://m.chemicalbook.com/priceindex_cb6145866.htm",
-      "note": "وسيط 6 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
+      "note": "وسيط 1 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
     }
   ]
 }
