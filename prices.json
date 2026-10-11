@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-10T06:05:53+00:00",
+  "updated_at": "2026-10-11T06:06:19+00:00",
   "fx": {
-    "USD_EGP": 52.380358,
-    "USD_CNY": 6.706465
+    "USD_EGP": 52.38102,
+    "USD_CNY": 6.706851
   },
   "materials": [
     {
@@ -15,7 +15,7 @@
       "unit": "MT",
       "usd_per_ton": 880.0,
       "previous_usd_per_ton": 880.0,
-      "price_date": "2026-10-10",
+      "price_date": "2026-10-11",
       "delivery_period": "October 2026 arrival",
       "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
@@ -30,8 +30,8 @@
       "native_price": 7788.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1161.27,
-      "previous_usd_per_ton": 1081.57,
+      "usd_per_ton": 1161.2,
+      "previous_usd_per_ton": 1161.27,
       "price_date": "2026-10-09",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
@@ -47,8 +47,8 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1337.07,
-      "previous_usd_per_ton": 1335.32,
+      "usd_per_ton": 1336.99,
+      "previous_usd_per_ton": 1337.07,
       "price_date": "2026-10-09",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
@@ -64,9 +64,9 @@
       "native_price": 8300.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1237.61,
-      "previous_usd_per_ton": 1235.99,
-      "price_date": "2026-10-09",
+      "usd_per_ton": 1237.54,
+      "previous_usd_per_ton": 1237.61,
+      "price_date": "2026-10-10",
       "delivery_period": "",
       "price_type": "Asia Supplier Market Indicator",
       "source_name": "ChemicalBook",
