@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-10-21T06:20:45+00:00",
+  "updated_at": "2026-10-22T06:21:47+00:00",
   "fx": {
-    "USD_EGP": 54.488856,
-    "USD_CNY": 6.691314
+    "USD_EGP": 54.385184,
+    "USD_CNY": 6.689327
   },
   "materials": [
     {
@@ -27,12 +27,12 @@
       "name": "Diethylene Glycol",
       "market": "Asia - East China",
       "basis": "East China DEG market reference",
-      "native_price": 6433.0,
+      "native_price": 6933.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 961.4,
-      "previous_usd_per_ton": 981.08,
-      "price_date": "2026-10-20",
+      "usd_per_ton": 1036.43,
+      "previous_usd_per_ton": 961.4,
+      "price_date": "2026-10-21",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
       "source_name": "GuideChem / GuideTrends",
@@ -47,8 +47,8 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1340.1,
-      "previous_usd_per_ton": 1339.63,
+      "usd_per_ton": 1340.49,
+      "previous_usd_per_ton": 1340.1,
       "price_date": "2026-10-19",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
