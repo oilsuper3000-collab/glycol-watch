@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-11-01T12:20:06+00:00",
+  "updated_at": "2026-11-02T14:13:56+00:00",
   "fx": {
-    "USD_EGP": 56.030715,
-    "USD_CNY": 6.670992
+    "USD_EGP": 55.960696,
+    "USD_CNY": 6.660856
   },
   "materials": [
     {
@@ -15,7 +15,7 @@
       "unit": "MT",
       "usd_per_ton": 880.0,
       "previous_usd_per_ton": 880.0,
-      "price_date": "2026-11-01",
+      "price_date": "2026-11-02",
       "delivery_period": "November 2026 arrival",
       "price_type": "Asia Contract Price",
       "source_name": "MEGlobal",
@@ -30,8 +30,8 @@
       "native_price": 8053.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1207.17,
-      "previous_usd_per_ton": 1207.42,
+      "usd_per_ton": 1209.0,
+      "previous_usd_per_ton": 1207.17,
       "price_date": "2026-10-28",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
@@ -47,8 +47,8 @@
       "native_price": 8967.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1344.18,
-      "previous_usd_per_ton": 1344.47,
+      "usd_per_ton": 1346.22,
+      "previous_usd_per_ton": 1344.18,
       "price_date": "2026-10-28",
       "delivery_period": "",
       "price_type": "Asia Market Indication",
@@ -61,17 +61,17 @@
       "name": "Polyethylene Glycol 400",
       "market": "Asia - China",
       "basis": "China PEG400 supplier-market median",
-      "native_price": 9700.0,
+      "native_price": 10600.0,
       "native_currency": "CNY",
       "unit": "MT",
-      "usd_per_ton": 1454.06,
-      "previous_usd_per_ton": 1175.7,
-      "price_date": "2026-10-31",
+      "usd_per_ton": 1591.39,
+      "previous_usd_per_ton": 1454.06,
+      "price_date": "2026-11-01",
       "delivery_period": "",
       "price_type": "Asia Supplier Market Indicator",
       "source_name": "ChemicalBook",
       "source_url": "https://m.chemicalbook.com/priceindex_cb6145866.htm",
-      "note": "وسيط 3 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
+      "note": "وسيط 1 عروض PEG400 في أحدث يوم. يُستخدم كمؤشر سوق آسيوي بديل عند تعذر تقرير شرق الصين."
     }
   ]
 }
